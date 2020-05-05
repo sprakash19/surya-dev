@@ -1,0 +1,99 @@
+import java.io.*;
+import java.util.*;
+
+/*
+ * To execute Java, please define "static void main" on a class
+ * named Solution.
+ *
+ * If you need more classes, simply define them inline.
+ */
+
+/*
+
+              .   O     〇     o     #=#  <- space station
+              →   ←     →      ←
+
+mass          1   5     7      3
+direction     1  -1     1     -1
+
+
+Asteroid
+    mass
+    direction
+    
+List<Asteroid>
+
+
+*/
+
+class Solution {
+  public static void main(String[] args) {
+    List<Asteroid> asteroids = new ArrayList<>();
+    asteroids.add( new Asteroid(1,1));
+    asteroids.add( new Asteroid(5,1));
+    asteroids.add( new Asteroid(3,1));
+    asteroids.add( new Asteroid(7,1));
+    
+   
+    List<Asteroid> movingAsteroids = new ArrayList<>();
+    int m1 = -1;
+    int m2 = -1;
+   
+   for(Asteroid ast : asteroids) {
+     
+     int direction = ast.getDirection();
+     
+     if(direction == 1) {
+       movingAsteroids.add(ast);
+     }
+     else if(movingAsteroids.size() != 0) {
+      m1 =  movingAsteroids.get(movingAsteroids.size() -1).getMass();
+      m2 =  ast.getMass();
+     if(m1 >= m2) {
+     continue;  
+     }
+     movingAsteroids.remove(movingAsteroids.size() -1);
+       
+    }
+    }
+    while(movingAsteroids.size() > 0 ) {
+     m1 =  movingAsteroids.get(movingAsteroids.size() -1).getMass(); 
+      if(m1 >= m2) {
+        break;
+     }
+      else {
+      movingAsteroids.remove(movingAsteroids.size() -1);  
+      }
+    }
+    System.out.println(movingAsteroids.size());
+  }
+}
+
+class Asteroid {
+ private int mass;
+ private int direction; 
+  
+  public Asteroid(int mass, int direction){
+    
+    this.mass = mass;
+    this.direction = direction;
+    
+  }
+  
+ public void setMass(int mass) {
+  this.mass = mass; 
+ }
+  
+  public int getMass(){
+   return this.mass; 
+  }
+  
+  public void setDirection(int direction) {
+  this.direction = direction; 
+ }
+  
+  public int getDirection(){
+   return this.direction; 
+  }
+  
+}

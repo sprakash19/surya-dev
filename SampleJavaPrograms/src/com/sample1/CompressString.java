@@ -1,0 +1,45 @@
+package com.sample1;
+
+class CompressString {
+    
+    public static void main(String[] args) {
+        
+        String input = "AAAABBCCAA";
+        CompressString obj = new CompressString();
+        System.out.println(obj.getCompressedStr(input));
+        
+    }
+    private String getCompressedStr(String str) {
+        int count =0;
+        char prevChar = '\0';
+        StringBuilder sb = new StringBuilder();
+        for(int i=0; i < str.length(); i++) {
+            
+            char currChar = str.charAt(i);
+            if(prevChar == '\0') {
+                prevChar = currChar;
+                count++;
+                continue;
+            }
+            else
+            if(currChar == prevChar) {
+                count++;
+                continue;
+            }
+            
+                sb.append(prevChar+"");
+                if(count > 1 ) {
+                sb.append(count+"");
+                }
+                prevChar = currChar;
+                count = 1;
+            
+        }
+                sb.append(prevChar+"");
+                if(count > 1 ) {
+                sb.append(count+"");
+                }
+        
+        return sb.toString();
+    }
+}

@@ -1,0 +1,105 @@
+/**
+ * 
+ * Exercise: Implement a RateLimiter Class with a checkPermit method. 
+ * Deny a request if that client has made more than m requests in the n second.
+ * 
+ * A rate limiter that checks if the number of "permits" (i.e. hits) have exceeded the allowable amount within the past
+ *   x seconds.
+ *
+ * The permit count and window is configurable.
+ *
+ * Default: 20 permits within 5 seconds.
+ * Constraints:
+ *   permits: 1 <= permits < 100000
+ *   window (ms): 1000L <= windowMs <= 60000L
+ *
+ *
+ * An exception will be thrown if the number of requested permits exceeds the allowed in the past x milliseconds.
+ *
+ *
+ */
+public class RateLimiter {
+
+  private static final int DEFAULT_PERMITTED_COUNT = 20;
+  private static final long DEFAULT_PERMITTED_WINDOW_MS = 5000L;
+  private Queue<Long> permitBucket;
+
+  private final int permittedCount;
+  private final long permittedWindowMs;
+  Queue<Long> requestsQueue = null;
+
+  // Define constructor(s) here
+  public RateLimiter(final int permittedCount, final long permittedWindowMs) {
+    this.permittedCount = permittedCount;
+    this.permittedWindowMs = permittedWindowMs;
+    requestsQueue = new LinkedList<>();    
+  }
+  
+  public RateLimiter() {
+    this(this.permittedCounter, this.permittedWindowMs);
+  }
+
+  // Define method(s) here
+  // [:01][:02][:02.175][:03.275][:06] :06
+  // System.currentTimeMillis()
+  // peek()
+   public void checkPermit() throws PermitExceededException {
+   
+         long currTime = System.currentTimeMillis();
+             if(requestsQueue.size() < this.permittedCount){  
+              requestsQueue.offer(currTime);
+              }
+              else if(currTime - requestsQueue.peek() < this.permittedWindowMs) {
+             throw new PermitExceededException();
+              }
+              else {
+              requestsQueue.poll();
+              requestsQueue.offer(currTime);
+              }
+           
+           }
+ 
+  // --------------------------------------------------------
+
+  static class PermitExceededException extends Exception {
+    private PermitExceededException(final String message) {
+      super(message);
+    }
+  }
+
+  public static void main(String[] args) {
+    /*
+     *  5 requests are permitted everything 5 seconds.
+     *  4:00:00: OK
+     *  4:00:01: OK
+     *  4:00:02: OK
+     *  4:00:02.125: OK
+     *  4:00:03.275: OK
+     *  4:00:04: DENY
+     *  4:00:06: OK
+     */
+    RateLimiter rateLimiter = new RateLimiter(5, 5000L); // 5 requests allowed in 5 seconds
+
+    // code snippet for controller starts here
+    try {
+      rateLimiter.checkPermit();
+      // request can be served
+    } catch (PermitExceededException e) {
+      // the requested operation cannot be served because rate has been exceeded.
+    }
+  }
+}
+
+public class MyApplication {
+  private final RateLimiter rateLimiter = new RateLimiter(5, 5000L); // 5 requests allowed in 5 seconds'
+  
+  public void handleRequest() {
+    try {
+      rateLimiter.checkPermit();
+      // request can be served
+    } catch (PermitExceededException e) {
+      // the requested operation cannot be served because rate has been exceeded.
+    }
+  }
+}
+
